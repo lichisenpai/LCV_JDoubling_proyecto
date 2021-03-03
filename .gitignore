@@ -1,0 +1,9 @@
+programs/pyvenv.cfg
+.vscode/settings.json
+.vscode/settings.json
+programs/Lib/site-packages/easy_install.py
+programs/Lib/site-packages/__pycache__/easy_install.cpython-38.pyc
+programs/Lib/site-packages/pip/__init__.py
+programs/Lib/site-packages/pip/__main__.py
+programs/Lib/site-packages/pip/__pycache__/__init__.cpython-38.pyc
+programs/Lib/site-packages/pip/__pycache__/__main__.cpython-38.pyc
