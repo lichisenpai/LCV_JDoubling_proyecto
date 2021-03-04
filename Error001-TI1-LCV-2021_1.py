@@ -153,6 +153,4 @@ for i in range (len(ref)):
 
 print("valores calculados con JDoubling: ", calc)
 
-if __name__ == "__main__":
-    main()
 
