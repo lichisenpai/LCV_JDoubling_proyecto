@@ -11,7 +11,6 @@ from nmrsim import Multiplet
 from nmrsim.plt import mplplot
 import matplotlib.pyplot as plt
 import numpy as np
-import csv
 from scipy.signal import argrelextrema
 
 #ref es la variable que quiero ir cambiando para ejecutar el programa i veces, empece con 3 para que no se tarde mucho
@@ -22,7 +21,7 @@ calc = []
 
 for i in range (len(ref)): 
     # 1200 Hz, 2H, td, J= 7.1, 1.1 Hz
-    td = Multiplet(1200 , 1, [(ref[i], 1)]) #aqui entra en juego ref 
+    td = Multiplet(1200 , 1, [(ref[i], 1)], points = 1000) #aqui entra en juego ref 
     grafica = mplplot(td.peaklist())
 
     #para crear el archivo de texto
@@ -35,7 +34,7 @@ for i in range (len(ref)):
 
     Hz = (grafica[0])
     min_Hz = (Hz[0])
-    max_Hz = (Hz[799])
+    max_Hz = (Hz[no_datos - 1])
 
     oracion1 = f"Number of data points      : {no_datos} \n"
     oracion2 = f"Chemical shift range (ppm) : 1 1\n"
