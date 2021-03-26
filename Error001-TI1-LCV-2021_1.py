@@ -31,7 +31,7 @@ for i in range (len(ref)):
     intensidades1 = []
 
     for i in range (len(intensidades)):
-        intensidades1.append(round(intensidades[i], 8))
+        intensidades1.append(round(intensidades[i], 6))
 
     Hz = (grafica[0])
     min_Hz = (Hz[0])
