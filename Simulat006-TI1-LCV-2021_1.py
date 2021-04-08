@@ -10,7 +10,7 @@ print(td.v)
 print(td.I)
 print(td.J)
 
-grafica = mplplot(td.peaklist(), points = 1000)
+grafica = mplplot(td.peaklist(), points = 1000, w= 5) #w es ancho de señal
 
 #para cuando quiero recuperar la imagen del multiplete
 plt.plot(grafica[0], grafica[1])
