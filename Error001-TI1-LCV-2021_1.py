@@ -14,15 +14,17 @@ import numpy as np
 from scipy.signal import argrelextrema
 
 #ref es la variable que quiero ir cambiando para ejecutar el programa i veces, empece con 3 para que no se tarde mucho
-ref = 0.5 , 7.1 , 12
+#ref = np.linspace(0.1, 12.0, 10)
+
+ref = 0.2, 0.5, 7.0, 12.0
 
 calc = []
 
 
 for i in range (len(ref)): 
     # 1200 Hz, 2H, td, J= 7.1, 1.1 Hz
-    td = Multiplet(1200 , 1, [(ref[i], 1)], points = 1000) #aqui entra en juego ref 
-    grafica = mplplot(td.peaklist())
+    td = Multiplet(1200 , 1, [(ref[i], 1)]) #aqui entra en juego ref 
+    grafica = mplplot(td.peaklist(), points=1000)
 
     #para crear el archivo de texto
     intensidades = (grafica[1]) * 10000
@@ -132,8 +134,8 @@ for i in range (len(ref)):
     nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
 
     # La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
-    intervalo = 80
-    m = 256
+    intervalo = 150
+    m = 300
     integrs = integrar(yy, intervalo, m)
 
     minimos = argrelextrema(integrs, np.less)[0]
