@@ -20,7 +20,6 @@ ref = 0.2, 0.5, 7.0, 12.0
 
 calc = []
 
-
 for i in range (len(ref)): 
     # 1200 Hz, 2H, td, J= 7.1, 1.1 Hz
     td = Multiplet(1200 , 1, [(ref[i], 1)]) #aqui entra en juego ref 
