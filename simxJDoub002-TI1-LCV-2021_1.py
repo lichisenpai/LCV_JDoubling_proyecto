@@ -15,7 +15,7 @@ import csv
 from scipy.signal import argrelextrema
 
 # 1200 Hz, 2H, td, J= 7.1, 1.1 Hz
-td = Multiplet(1200.0, 1, [(12, 1)])
+td = Multiplet(1200.0, 1, [(7, 1)])
 print(td.v)
 print(td.I)
 print(td.J)
