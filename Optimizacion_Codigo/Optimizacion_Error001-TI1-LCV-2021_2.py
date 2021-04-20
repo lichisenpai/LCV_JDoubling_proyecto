@@ -5,6 +5,9 @@ import numpy as np
 from scipy.signal import argrelextrema
 import matplotlib.pyplot as plt
 
+"""Esta madre tiene un problema con mi funcion de archiv_txt que no jala bien por alguna
+ razon a la hora de ejecutar la integral """
+
 #ref es la variable que quiero ir cambiando para ejecutar el programa i veces, empece con 3 para que no se tarde mucho
 #ref = np.linspace(0.1, 12.0, 10)
 
@@ -106,10 +109,11 @@ def trasladar(ys, n):
             y_new[i] += -ys[i-n]
     return y_new    
 
-"""
+
 for i in range (len(ref)): 
-    
-    archiv_txt(1200.0, 1, i, 1) 
+    # 1200 Hz, 2H, td, J= 7.1, 1.1 Hz
+    archiv_txt(1200, 1, ref[i], 1)
+    #Intento de programa conjunto (JDoubling del profe)
 
     yy, a, b = leer_archivo('multiplete7.slc')
 
@@ -137,46 +141,11 @@ for i in range (len(ref)):
     
     Jota = minimos[-1] * paso_hz #esta es la variable que quiero guardar 
 
+    
 
     #for i in range (len(ref)): #Esta es la parte que no me sale para guardar los datos
     calc.append(Jota) #se guarda las i veces que da la vuelta el codigo pero solo de la ultima J
 
     print(f"Jota: {Jota}         Resolución Digital: {paso_hz}")
 
-print("valores calculados con JDoubling: ", calc)
-"""
-
-archiv_txt(1200.0, 1, 7.0, 1) 
-
-yy, a, b = leer_archivo('multiplete7.slc')
-
-iz = 0
-de = len(yy) - 1
-
-# Generar la secuencia xx
-paso_hz = abs(a-b)/len(yy)
-xx = [i*paso_hz+min([a, b]) for i in range(0, len(yy))]
-
-#Redefiniendo el arreglo en y
-yy = yy[iz:de]
-xx = xx[iz:de]
-nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
-
-# La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
-intervalo = 80
-m = 256
-integrs = integrar(yy, intervalo, m)
-
-plt.figure(figsize=(20,10))
-plt.plot(integrs, marker = 'o')
-plt.show()
-
-minimos = argrelextrema(integrs, np.less)[0]
-
-print(f"valores minimos en: {minimos}")
-print("Mínimo: ", integrs[19])
-
-Jota = minimos[-1] * paso_hz
-
-#Seleccionar el mínimo deseado para que se determine la J.¶
-print(f"Jota: {Jota}         Resolución Digital: {paso_hz}")
+print("Los valores de J determinados por JDoubling son: ", calc)

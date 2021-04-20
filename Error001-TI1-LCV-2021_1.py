@@ -16,7 +16,7 @@ from scipy.signal import argrelextrema
 #ref es la variable que quiero ir cambiando para ejecutar el programa i veces, empece con 3 para que no se tarde mucho
 #ref = np.linspace(0.1, 12.0, 10)
 
-ref = 0.2, 0.5, 7.0, 12.0
+ref = 0.5, 7.0
 
 calc = []
 

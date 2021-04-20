@@ -124,7 +124,7 @@ def trasladar(ys, n):
 yy, a, b = leer_archivo('multiplete7.slc')
 
 iz = 0
-de = len(intensidades) - 1
+de = len(yy) - 1
 
 # Generar la secuencia xx
 paso_hz = abs(a-b)/len(yy)
