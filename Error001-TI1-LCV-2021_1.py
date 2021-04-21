@@ -151,6 +151,7 @@ for i in range (len(ref)):
 
     print(f"Jota: {Jota}         Resolución Digital: {paso_hz}")
 
+
 print("valores calculados con JDoubling: ", calc)
 
 
