@@ -9,7 +9,7 @@ import json
 solo mueve los valores que quieres cambiar"""
 
 #Variables que yo le quiero meter 
-jotas = 0.5, 7.0, 12.0
+jotas = np.linspace(0.5,12.0, 201)
 
 calc = [] #lista para guardar la J calculada
 
@@ -137,7 +137,7 @@ for i in range (len(jotas)):
     max_x = v + 20
 
     td = Multiplet(v , 1, [(jotas[i], 1)]) #aqui entra en juego ref 
-    grafica = mplplot(td.peaklist(), points=1000, limits= (min_x, max_x))
+    grafica = mplplot(td.peaklist(), points=1000, w = 0.5, limits= (min_x, max_x))
 
     #para crear el archivo de texto
     intensidades = (grafica[1]) * 10000
