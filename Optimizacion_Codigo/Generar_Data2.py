@@ -4,10 +4,10 @@ from nmrsim.plt import mplplot
 import numpy as np
 from scipy.signal import argrelextrema
 import json
+import matplotlib.pyplot as plt
 
-
-#jotas = np.linspace(0.5,12.0, 201)#el intervalo de trabajo de las J´s en las que quiero trabajar
-jotas = [1.0,7.0,9.0,11.0, 12.0]
+jotas = np.linspace(0.5, 12.0, 201)#el intervalo de trabajo de las J´s en las que quiero trabajar
+#jotas = [0.7, 1.0, 12.0]
 
 calc = [] #lista para guardar la J que determina JDoubling
 
@@ -45,8 +45,6 @@ def archiv_txt (v, I, J, r):
     
     f.close()
 
-def cerrar_ventana():
-    return 
 #Intento de programa conjunto (JDoubling del profe)
 
 def leer_archivo(nombre):
@@ -120,27 +118,27 @@ def new_data (J, d, E): #Escribir los datos que quiero dentro del diccionario
     
     dato_n['Jref'] = J
     dato_n['Jdet'] = d
-    dato_n['Width'] = 0.5 
+    dato_n['Width'] = 1.5 
     dato_n['Error'] = E 
     return dato_n
 
 #crear el Json 
-def escritura_json ():
-    with open('W_puntocinco.json', 'w') as archivo: 
+def escritura_json (x):
+    nombre = f"W_{x}Hz.json"
+    with open(nombre, 'w') as archivo: 
         json.dump(Jota_0_5Hz, archivo)
-        print("Archivo exportado con éxito")
+        #print("Archivo exportado con éxito")
     return 
 
 
 for i in range (len(jotas)): 
     # v = 1200 Hz, I = intensidad, J = cte. acoplamiento, r = vecinos 
+    J = jotas[i]
     v = 1200.0
     min_x = v - 20 
     max_x = v + 20
-
-    J = jotas[i]
     td = Multiplet(v , 1, [(J, 1)]) #aqui entra en juego jotas 
-    grafica = mplplot(td.peaklist(), points=1000, w = 0.5, limits= (min_x, max_x))
+    grafica = mplplot(td.peaklist(), points=1000, w =1.5, limits= (min_x, max_x))
 
     #para crear el archivo de texto
     intensidades = (grafica[1]) * 10000 #aqui lo multiplico x10000 por que si no me da valores bien pequeños, pero si lo ves innecesario piedes quitarlo
@@ -186,15 +184,13 @@ for i in range (len(jotas)):
     nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
 
     # La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
-    intervalo = int((J/ paso_hz) * 1.1)
-    #intervalo = 300
-    m = 64
+    intervalo = int((J/ paso_hz) * 2.1)
+    m = 128
     integrs = integrar(yy, intervalo, m)
 
     minimos = argrelextrema(integrs, np.less)[0]
 
-    print(f"valores minimos en: {minimos}")
-    print("Mínimo: ", integrs[19]) 
+    print(f"valores minimos en: {minimos}") 
     
     Jota = minimos[-1] * paso_hz 
 
@@ -214,4 +210,4 @@ for a, b, c in zip(jotas, calc, Error):
     new_entry = new_data(a, b, c) 
     Jota_0_5Hz.append(new_entry) 
 
-#escritura_json()
+escritura_json("1_5")

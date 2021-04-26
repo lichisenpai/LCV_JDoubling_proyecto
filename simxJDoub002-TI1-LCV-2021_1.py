@@ -11,13 +11,13 @@ from nmrsim import Multiplet
 from nmrsim.plt import mplplot
 import matplotlib.pyplot as plt
 import numpy as np
-import csv
 from scipy.signal import argrelextrema
 
 v = 1200.0
+J = 12
 
 # 1200 Hz, 2H, td, J= 7.1, 1.1 Hz
-td = Multiplet(v, 1, [(12.0, 1)])
+td = Multiplet(v, 1, [(J, 1)])
 print(td.v)
 print(td.I)
 print(td.J)
@@ -25,7 +25,7 @@ print(td.J)
 min_x = v - 20 
 max_x = v + 20
 
-grafica = mplplot(td.peaklist(), points = 1000, limits= (min_x, max_x))
+grafica = mplplot(td.peaklist(), points = 1000, w = 12.0, limits= (min_x, max_x))
 
 #para cuando quiero recuperar la imagen del multiplete
 plt.plot(grafica[0], grafica[1])
@@ -141,8 +141,8 @@ xx = xx[iz:de]
 nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
 
 # La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
-intervalo = 400
-m = 300
+intervalo = int((J/ paso_hz) * 4.1)
+m = 164
 integrs = integrar(yy, intervalo, m)
 
 plt.figure(figsize=(20,10))
