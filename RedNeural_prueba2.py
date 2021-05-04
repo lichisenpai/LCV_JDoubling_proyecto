@@ -13,17 +13,20 @@ def leer_Json ():
     prueba = pd.read_json('W_1_0Hz.json')
     Y = prueba['Error'].values.reshape(-1, 1) #valor a predecir
     X = prueba[['Jref', 'Jdet', 'Width']].values.reshape(-1, 3) #Variables explicatorias
+    print(X)
     #X1 = prueba['Jdet'].values.reshape(-1,1)
-    return X, Y
+    return X , Y
 
+leer_Json()
 """
-X, Y, X1 = leer_Json()
+x, y = leer_Json()
 #print (Y)
-plt.plot(X1, Y)
+plt.plot(x, y)
 plt.xlabel("Jdet")
 plt.ylabel("Error")
 plt.title("Reducción de dimensionalidad para una W= 1.0 Hz")
 plt.show()
+"""
 """
 #remuestreo 70/30 
 def remuestreo70_30 ():
@@ -48,4 +51,5 @@ def lichi ():
         return lichi, Score
 
 lichi()
-    
+
+"""
