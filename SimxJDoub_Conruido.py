@@ -1,59 +1,68 @@
-
 import numpy as np
 from nmrsim import Multiplet
 from nmrsim.plt import mplplot
+import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 from scipy.signal import argrelextrema
 
-v = 1200.0
-J = 1.0
+def ReadJsonNoise (x, c):
+    prueba = pd.read_json(x)
+    Y = prueba['Random']#para tenerlo como array
+    Rvalue = np.random.choice(Y, 1000)#wlige 1000 puntos al azar, y 1000 por que es el valor de puntos que yo meti por default a mi simulacion
+    Norm = list(map(lambda w: w / c, Rvalue))#El c es el valor que divide los valores random de ruido, entre mayor el no. se ve menis el ruido
+    return Norm
 
-# 1200 Hz, 2H, td, J= 7.1, 1.1 Hz
-td = Multiplet(v, 1, [(J, 1)])
-print(td.v)
-print(td.I)
-print(td.J)
 
-min_x = v - 20 
-max_x = v + 20
+def Noise (a, b):
+    original = a
+    noise = b 
+    mse = (np.square(original - noise)).mean() #aqui nos dice cuanto "ruido" hay en promedio al cuadrado
+    rmse = pow(mse, 0.5) #la raiz cuadrada del anterior
+    maxim = max(original)# nos da el maximo de la simulacion original
+    s_n = maxim / rmse #relacion señal ruido
+    print("El mse es: ", mse)
+    print("El rmse es: ", rmse)
+    print("El maximo es: ", maxim)
+    print("La relación señal ruido es: ", s_n)
+    return mse, rmse, s_n
 
-grafica = mplplot(td.peaklist(), points = 1000, w = 0.5, limits= (min_x, max_x))
 
-#para cuando quiero recuperar la imagen del multiplete
-plt.plot(grafica[0], grafica[1])
-plt.xlabel("Frecuencia (Hz)")
-plt.ylim(0,1)
-plt.show()
+def multiplet (v, I, J, r):
+    #La simulacion tan famosa que ya conoces
+    td = Multiplet(v , I, [(J, r)]) 
+    grafica = mplplot(td.peaklist(), points=1000, w=0.5, limits=[])
+    return grafica 
 
-#para crear el archivo de texto
-intensidades = (grafica[1]) * 10000
-no_datos = len(grafica[1])
-intensidades1 = []
 
-for i in range (len(intensidades)):
-    intensidades1.append(round(intensidades[i], 6))
+def archiv_txt (X, Y):
+    #Datos en Y
+    intensidades = Y
+    no_datos = len(intensidades)
+    intensidades1 = []
+    for i in range (len(intensidades)):
+        intensidades1.append(round(intensidades[i], 6))
 
-Hz = (grafica[0])
-min_Hz = (Hz[0])
-max_Hz = (Hz[no_datos - 1])
+    #Datos en x 
+    Hz = X
+    min_Hz = (Hz[0])
+    max_Hz = (Hz[no_datos - 1])
 
-oracion1 = f"Number of data points      : {no_datos} \n"
-oracion2 = f"Chemical shift range (ppm) : 1 1\n"
-oracion3 = f"Chemical shift range (Hz)  : {min_Hz} {max_Hz}\n"
+    oracion1 = f"Number of data points      : {no_datos} \n"
+    oracion2 = f"Chemical shift range (ppm) : 1 1\n"
+    oracion3 = f"Chemical shift range (Hz)  : {min_Hz} {max_Hz}\n"
 
-#escritura del archivo para guardar los datos
-f = open('multiplete7.slc','w')
-f.write(oracion1)
-f.write(oracion2)
-f.write(oracion3)
-#f.write(str(lista1))
-for i in range (len(intensidades1)):
-    f.write(str(intensidades1[i])+"\n")
-f.close()
+    #escritura del archivo para guardar los datos
+    f = open('Prueba.slc','w')
+    f.write(oracion1)
+    f.write(oracion2)
+    f.write(oracion3)
+    
+    for i in range (len(intensidades1)):
+        f.write(str(intensidades1[i])+"\n")
+    
+    f.close()
 
-#Intento de programa conjunto (JDoubling del profe)
-
+#Jdoubling
 def leer_archivo(nombre):
     #Hay que analizar las primeras 3 renglones por separado.
     #a, b seran los extremos del intervalo en Hz
@@ -119,7 +128,25 @@ def trasladar(ys, n):
             y_new[i] += -ys[i-n]
     return y_new    
 
-yy, a, b = leer_archivo('multiplete7.slc')
+#Para simular 
+J = 1.0
+ruido = ReadJsonNoise("RandomNoise.json", 80) 
+multiplete = multiplet(1200.0, 1, J, 1) 
+intensidades = multiplete[1] 
+desplazamiento = multiplete[0] 
+señalCruido = ruido + intensidades 
+mse, rmse, s_n = Noise(intensidades, ruido) 
+#Grafica 
+plt.plot(desplazamiento, señalCruido)
+plt.title(f"Relación Señal/Ruido: {s_n}")
+plt.xlabel("Desplazamiento (Hz)")
+plt.ylabel("Intensidades")
+plt.show()
+
+archiv_txt(desplazamiento, señalCruido)
+
+#JDoubling
+yy, a, b = leer_archivo('Prueba.slc')
 
 iz = 0
 de = len(yy) - 1
@@ -134,7 +161,7 @@ xx = xx[iz:de]
 nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
 
 # La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
-intervalo = int((J/ paso_hz) * 12)
+intervalo = int((J / paso_hz) * 4)
 m = 164
 integrs = integrar(yy, intervalo, m)
 
@@ -151,3 +178,5 @@ Jota = minimos[-1] * paso_hz
 
 #Seleccionar el mínimo deseado para que se determine la J.¶
 print(f"Jota: {Jota}         Resolución Digital: {paso_hz}")
+
+

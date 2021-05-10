@@ -4,7 +4,6 @@ from nmrsim.plt import mplplot
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
 #Para leer el Json con ruido
 def ReadJsonNoise (x, c):
     prueba = pd.read_json(x)
@@ -12,6 +11,7 @@ def ReadJsonNoise (x, c):
     Rvalue = np.random.choice(Y, 1000)#wlige 1000 puntos al azar, y 1000 por que es el valor de puntos que yo meti por default a mi simulacion
     Norm = list(map(lambda w: w / c, Rvalue))#El c es el valor que divide los valores random de ruido, entre mayor el no. se ve menis el ruido
     return Norm
+
 
 #Aqui genero los "estadisticos" para medir el ruido 
 def Noise (a, b):
@@ -27,11 +27,13 @@ def Noise (a, b):
     print("La relación señal ruido es: ", s_n)
     return mse, rmse, s_n
 
+
 def multiplet (v, I, J, r):
     #La simulacion tan famosa que ya conoces
     td = Multiplet(v , I, [(J, r)]) 
     grafica = mplplot(td.peaklist(), points=1000, w=0.5, limits=[])
     return grafica 
+
 
 #la ya conocida funcion de archivo de texto
 def archiv_txt (X, Y):
@@ -75,11 +77,11 @@ mse, rmse, s_n = Noise(intensidades, ruido) #aqui me genera los estadisticos par
 
 #Grafica 
 plt.plot(desplazamiento, señalCruido)
-plt.title(f"Relacion señal ruido: {s_n}")
+plt.title(f"Relación Señal/Ruido: {s_n}")
 plt.xlabel("Desplazamiento (Hz)")
 plt.ylabel("Intensidades")
 plt.show()
 
-archiv_txt(desplazamiento, señalCruido) #me genera el ya famoso archivo de texto que lee JDoubling
+#archiv_txt(desplazamiento, señalCruido) #me genera el ya famoso archivo de texto que lee JDoubling
 
 
