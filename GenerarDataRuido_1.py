@@ -4,6 +4,7 @@ from nmrsim.plt import mplplot
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.signal import argrelextrema
+import json 
 
 def ReadJsonNoise (x, c):
     prueba = pd.read_json(x)
@@ -130,56 +131,95 @@ def trasladar(ys, n):
             y_new[i] += -ys[i-n]
     return y_new    
 
-#Para simular 
-J = 12.0
-ruido = ReadJsonNoise("RandomNoise.json", 300) 
-multiplete = multiplet(1200.0, 1, J, 1) 
-intensidades = multiplete[1] 
-desplazamiento = multiplete[0] 
-señalCruido = ruido + intensidades 
-mse, rmse, s_n = Noise(intensidades, ruido) 
-#Grafica 
-plt.plot(desplazamiento, señalCruido)
-plt.title(f"Relación Señal/Ruido: {s_n}")
-plt.xlabel("Desplazamiento (Hz)")
-plt.ylabel("Intensidades")
-plt.show()
+def new_data (J, d, E): #Escribir los datos que quiero dentro del diccionario
+    #J= cte. de acoplamiento que yo puse(jota), d= cte. de acoplamiento determinada(calc), E=error 
+    dato_n = {}
+    
+    dato_n['Jref'] = J
+    dato_n['Jdet'] = d
+    dato_n['Width'] = 1.5 
+    dato_n['Error'] = E 
+    return dato_n
 
-archiv_txt(desplazamiento, señalCruido)
+#crear el Json 
+def escritura_json (x):
+    nombre = f"W_{x}Hz.json"
+    with open(nombre, 'w') as archivo: 
+        json.dump(Jota_0_5Hz, archivo)
+        #print("Archivo exportado con éxito")
+    return 
 
-#JDoubling
-yy, a, b = leer_archivo('Prueba.slc')
+#jotas = np.linspace(0.5, 12.0, 201)#el intervalo de trabajo de las J´s en las que quiero trabajar
+jotas = [1.0, 7.0, 12.0]
 
-iz = 0
-de = len(yy) - 1
+calc = [] #lista para guardar la J que determina JDoubling
 
-# Generar la secuencia xx
-paso_hz = abs(a-b)/len(yy)
-xx = [i*paso_hz+min([a, b]) for i in range(0, len(yy))]
-
-#Redefiniendo el arreglo en y
-yy = yy[iz:de]
-xx = xx[iz:de]
-nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
-
-# La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
-intervalo = int((J / paso_hz) * 1.3)
-m = 164
-integrs = integrar(yy, intervalo, m)
-
-plt.figure(figsize=(20,10))
-plt.plot(integrs, marker = 'o')
-plt.show()
-
-minimos = argrelextrema(integrs, np.less, order=9)[0]
-#minimos = min(integrs)
-
-print(f"valores minimos en: {minimos}")
-print("Mínimo: ", integrs[19])
-
-Jota = minimos[-1] * paso_hz
-
-#Seleccionar el mínimo deseado para que se determine la J.¶
-print(f"Jota: {Jota}         Resolución Digital: {paso_hz}")
+Jota_0_5Hz = [] #lista donde guardar los datos para el json
 
 
+for i in range (len(jotas)):
+    #Para simular 
+    J = jotas[i]
+    ruido = ReadJsonNoise("RandomNoise.json", 80) 
+    multiplete = multiplet(1200.0, 1, J, 1) 
+    intensidades = multiplete[1] 
+    desplazamiento = multiplete[0] 
+    señalCruido = ruido + intensidades 
+    mse, rmse, s_n = Noise(intensidades, ruido) 
+    """#Grafica 
+    plt.plot(desplazamiento, señalCruido)
+    plt.title(f"Relación Señal/Ruido: {s_n}")
+    plt.xlabel("Desplazamiento (Hz)")
+    plt.ylabel("Intensidades")
+    plt.show()
+    """
+    archiv_txt(desplazamiento, señalCruido)
+
+    #JDoubling
+    yy, a, b = leer_archivo('Prueba.slc')
+
+    iz = 0
+    de = len(yy) - 1
+
+    # Generar la secuencia xx
+    paso_hz = abs(a-b)/len(yy)
+    xx = [i*paso_hz+min([a, b]) for i in range(0, len(yy))]
+
+    #Redefiniendo el arreglo en y
+    yy = yy[iz:de]
+    xx = xx[iz:de]
+    nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
+
+    # La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
+    intervalo = int((J / paso_hz) * 4)
+    m = 164
+    integrs = integrar(yy, intervalo, m)
+
+    plt.figure(figsize=(20,10))
+    plt.plot(integrs, marker = 'o')
+    plt.show()
+
+    minimos = argrelextrema(integrs, np.less)[0]
+
+    print(f"valores minimos en: {minimos}")
+    print("Mínimo: ", integrs[19])
+
+    Jota = minimos[-1] * paso_hz
+
+    calc.append(Jota) 
+
+    #Seleccionar el mínimo deseado para que se determine la J.¶
+    print(f"Jota: {Jota}         Resolución Digital: {paso_hz}")
+
+
+Error = list(np.array(jotas)-np.array(calc)) 
+
+print("Los valores de J determinados por JDoubling son: ", calc)
+print("Los errores son:", Error)
+
+
+for a, b, c in zip(jotas, calc, Error):
+    new_entry = new_data(a, b, c)
+    Jota_0_5Hz.append(new_entry) 
+
+escritura_json(1111)
