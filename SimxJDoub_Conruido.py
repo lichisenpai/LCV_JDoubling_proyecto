@@ -1,9 +1,12 @@
+from functools import wraps
 import numpy as np
 from nmrsim import Multiplet
 from nmrsim.plt import mplplot
+from numpy.core.fromnumeric import clip
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.signal import argrelextrema
+from statistics import mean, mode
 
 def ReadJsonNoise (x, c):
     prueba = pd.read_json(x)
@@ -15,8 +18,10 @@ def ReadJsonNoise (x, c):
 
 def Noise (a, b):
     original = a
-    noise = b 
-    mse = (np.square(original - noise)).mean() #aqui nos dice cuanto "ruido" hay en promedio al cuadrado
+    noise = b
+    prom = sum(noise)/len(noise)
+    msex = list(map(lambda x: np.square(x - prom), noise))
+    mse = mean(msex)
     rmse = pow(mse, 0.5) #la raiz cuadrada del anterior
     maxim = max(original)# nos da el maximo de la simulacion original
     s_n = maxim / rmse #relacion señal ruido
@@ -130,9 +135,34 @@ def trasladar(ys, n):
             y_new[i] += -ys[i-n]
     return y_new    
 
+#Confirmacion subarmonicos 
+def Armonics (x, integ):
+    armonic1 = x
+    if armonic1 in integ: 
+        print("armonico coincide perfectamente")
+        return armonic1 
+    
+    elif armonic1 + 1 in integ:
+        print("armonico coincide +1") 
+        return armonic1
+
+    elif armonic1 + 2 in integ: 
+        return armonic1 
+    
+    elif armonic1 - 1 in integ: 
+        return armonic1
+    
+    elif armonic1 - 2 in integ: 
+        return armonic1
+    
+    else:
+        print("subarmonico no confirmado")
+        return 0
+    
+
 #Para simular 
-J = 12.0
-ruido = ReadJsonNoise("RandomNoise.json", 300) 
+J = 1.0
+ruido = ReadJsonNoise("RandomNoise.json", 50) 
 multiplete = multiplet(1200.0, 1, J, 1) 
 intensidades = multiplete[1] 
 desplazamiento = multiplete[0] 
@@ -144,6 +174,7 @@ plt.title(f"Relación Señal/Ruido: {s_n}")
 plt.xlabel("Desplazamiento (Hz)")
 plt.ylabel("Intensidades")
 plt.show()
+
 
 archiv_txt(desplazamiento, señalCruido)
 
@@ -171,15 +202,18 @@ plt.figure(figsize=(20,10))
 plt.plot(integrs, marker = 'o')
 plt.show()
 
-minimos = argrelextrema(integrs, np.less, order=9)[0]
-#minimos = min(integrs)
+busqueda = int(intervalo/7)
+#minimos = argrelextrema(integrs, np.less, order=busqueda, mode= 'wrap')[0]
+minimos = argrelextrema(integrs, np.less, mode='wrap')[0]
 
 print(f"valores minimos en: {minimos}")
-print("Mínimo: ", integrs[19])
+
+armonic1 = int((minimos[-1])/3)
+
+subarmos= Armonics(armonic1, minimos)
 
 Jota = minimos[-1] * paso_hz
 
 #Seleccionar el mínimo deseado para que se determine la J.¶
 print(f"Jota: {Jota}         Resolución Digital: {paso_hz}")
-
 
