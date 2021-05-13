@@ -9,7 +9,7 @@ from statistics import mean
 def ReadJsonNoise (x, c):
     prueba = pd.read_json(x)
     Y = prueba['Random']#para tenerlo como array
-    Rvalue = np.random.choice(Y, 1000)#wlige 1000 puntos al azar, y 1000 por que es el valor de puntos que yo meti por default a mi simulacion
+    Rvalue = np.random.choice(Y, 10000)#wlige 1000 puntos al azar, y 1000 por que es el valor de puntos que yo meti por default a mi simulacion
     Norm = list(map(lambda w: w / c, Rvalue))#El c es el valor que divide los valores random de ruido, entre mayor el no. se ve menis el ruido
     return Norm
 
@@ -35,7 +35,7 @@ def multiplet (v, I, J, r):
     min_x = v - 20 
     max_x = v + 20
     td = Multiplet(v , I, [(J, r)]) 
-    grafica = mplplot(td.peaklist(), points=1000, w=12.0, limits=(min_x, max_x))
+    grafica = mplplot(td.peaklist(), points=10000, w=0.5, limits=(min_x, max_x))
     return grafica 
 
 
@@ -165,7 +165,7 @@ def Armonics (x, integ):
 
 #Para simular 
 J = 0.5
-ruido = ReadJsonNoise("RandomNoise.json", 50) 
+ruido = ReadJsonNoise("RandomNoise.json", 100) 
 multiplete = multiplet(1200.0, 1, J, 1) 
 intensidades = multiplete[1] 
 desplazamiento = multiplete[0] 
