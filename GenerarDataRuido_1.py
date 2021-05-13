@@ -2,7 +2,7 @@ import numpy as np
 from nmrsim import Multiplet
 from nmrsim.plt import mplplot
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from scipy.signal import argrelextrema
 import json 
 from statistics import mean
@@ -10,7 +10,7 @@ from statistics import mean
 def ReadJsonNoise (x, c):
     prueba = pd.read_json(x)
     Y = prueba['Random']#para tenerlo como array
-    Rvalue = np.random.choice(Y, 1000)#wlige 1000 puntos al azar, y 1000 por que es el valor de puntos que yo meti por default a mi simulacion
+    Rvalue = np.random.choice(Y, 5000)#wlige 1000 puntos al azar, y 1000 por que es el valor de puntos que yo meti por default a mi simulacion
     Norm = list(map(lambda w: w / c, Rvalue))#El c es el valor que divide los valores random de ruido, entre mayor el no. se ve menis el ruido
     return Norm
 
@@ -36,7 +36,7 @@ def multiplet (v, I, J, r):
     min_x = v - 20 
     max_x = v + 20
     td = Multiplet(v , I, [(J, r)]) 
-    grafica = mplplot(td.peaklist(), points=1000, w=0.5, limits=(min_x, max_x))
+    grafica = mplplot(td.peaklist(), points=5000, w=0.5, limits=(min_x, max_x))
     return grafica 
 
 
@@ -183,7 +183,7 @@ def Armonics (x, integ):
         print("subarmonico no confirmado")
         return 0
 
-jotas = np.linspace(0.5, 12.0, 201)#el intervalo de trabajo de las J´s en las que quiero trabajar
+jotas = np.linspace(0.5, 1.0, 101)#el intervalo de trabajo de las J´s en las que quiero trabajar
 #jotas = [1.0, 7.0, 12.0]
 
 calc = [] #lista para guardar la J que determina JDoubling
@@ -269,4 +269,4 @@ for a, b, c, d, e, f, g in zip(jotas, calc, Error, SubHarmonics, DistHz, S_n, Er
     new_entry = new_data(a, b, c, d, e, f, g)
     Jota_0_5Hz.append(new_entry) 
 
-escritura_json("0_5")
+escritura_json("0_5a1_0")
