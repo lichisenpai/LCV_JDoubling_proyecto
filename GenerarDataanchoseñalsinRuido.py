@@ -31,12 +31,12 @@ def Noise (a, b):
     return mse, rmse, s_n
 
 
-def multiplet (v, I, J, r):
+def multiplet (v, I, J, r, W):
     #La simulacion tan famosa que ya conoces
     min_x = v - 20 
     max_x = v + 20
     td = Multiplet(v , I, [(J, r)]) 
-    grafica = mplplot(td.peaklist(), points=1000, w=0.5, limits=(min_x, max_x))
+    grafica = mplplot(td.peaklist(), points=1000, w = W, limits=(min_x, max_x))
     return grafica 
 
 
@@ -134,23 +134,23 @@ def trasladar(ys, n):
             y_new[i] += -ys[i-n]
     return y_new    
 
-def new_data (d, E, S, D, sn, E2): #Escribir los datos que quiero dentro del diccionario
+def new_data (d, WW, E, S, D, M, E2): #Escribir los datos que quiero dentro del diccionario
     #J= cte. de acoplamiento que yo puse(jota), d= cte. de acoplamiento determinada(calc), E=error 
     dato_n = {}
     
     dato_n['Jref'] = 2.0
     dato_n['Jdet'] = d
-    dato_n['Width'] = 0.5 
+    dato_n['Width'] = WW 
     dato_n['Error'] = E 
     dato_n['1Subharmonic'] = S
     dato_n['Distance'] = D
-    dato_n['S/n'] = sn
+    dato_n['Maximo'] = M
     dato_n['Error2']=E2
     return dato_n
 
 #crear el Json 
-def escritura_json ():
-    nombre = f"J2HzW0_5HzVariandoRuido.json"
+def escritura_json (h):
+    nombre = f"W{h}HzsinRuido.json"
     with open(nombre, 'w') as archivo: 
         json.dump(Jota_0_5Hz, archivo)
         #print("Archivo exportado con éxito")
@@ -186,32 +186,31 @@ def Armonics (x, integ):
         print("subarmonico no confirmado")
         return 0
 
-#jotas = np.linspace(0.5, 12.0, 201)#el intervalo de trabajo de las J´s en las que quiero trabajar
+#jotas = np.linspace(0.5, 182.0, 201)#el intervalo de trabajo de las J´s en las que quiero trabajar
 jotas = [2.0 for _ in range(201)]
-division = np.linspace(5, 300, 201)
 calc = [] #lista para guardar la J que determina JDoubling
 Jota_0_5Hz = [] #lista donde guardar los datos para el json
 SubHarmonics = [] #lista que guarda el primer valor del subarmónico
-S_n = []
+maximo = []
+w= np.linspace(0.5, 6, 201)
 
-for i in range (len(division)):
+for i in range (len(w)):
     #Para simular 
     J = 2.0
-    D = division[i]
-    ruido = ReadJsonNoise("RandomNoise.json", D) 
-    multiplete = multiplet(1200.0, 1, J, 1) 
+    ww = w[i]
+    #ruido = ReadJsonNoise("RandomNoise.json", 300) 
+    multiplete = multiplet(1200.0, 1, J, 1, ww) 
     intensidades = multiplete[1] 
     desplazamiento = multiplete[0] 
-    señalCruido = ruido + intensidades 
-    mse, rmse, s_n = Noise(intensidades, ruido) 
-    #Grafica 
-    """plt.plot(desplazamiento, señalCruido)
-    plt.title(f"Relación Señal/Ruido: {s_n}")
+    Maxx = max(intensidades)
+
+    """plt.plot(desplazamiento, intensidades)
+    plt.title(f"Ancho de Señal: {ww}")
     plt.xlabel("Desplazamiento (Hz)")
     plt.ylabel("Intensidades")
     plt.show()"""
     
-    archiv_txt(desplazamiento, señalCruido)
+    archiv_txt(desplazamiento, intensidades)
 
     #JDoubling
     yy, a, b = leer_archivo('Prueba.slc')
@@ -229,7 +228,7 @@ for i in range (len(division)):
     nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
 
     # La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
-    intervalo = int((J / paso_hz) * 1.3)
+    intervalo = int((J / paso_hz) * 1.2)
     m = 164
     integrs = integrar(yy, intervalo, m)
 
@@ -237,24 +236,21 @@ for i in range (len(division)):
     plt.plot(integrs, marker = 'o')
     plt.show()"""
 
-    busqueda = int(intervalo/7)
-    minimosR = argrelextrema(integrs, np.less, order=busqueda, mode= 'wrap')[0]#busca el minimo mas minimo
-
-    minimos = argrelextrema(integrs, np.less, mode='wrap')[0] #me da todos los minimos con ruido
+    minimos = argrelextrema(integrs, np.less)[0] #me da todos los minimos con ruido
 
     print(f"valores minimos (+ ruido) en: {minimos}")
 
     
-    armonic1 = int((minimosR[-1])/3)
+    armonic1 = int((minimos[-1])/3)
 
     subarmos= Armonics(armonic1, minimos)
     subarmosHz = subarmos * paso_hz
 
-    Jota = minimosR[-1] * paso_hz
+    Jota = minimos[-1] * paso_hz
 
     calc.append(Jota) 
     SubHarmonics.append(subarmosHz)
-    S_n.append(s_n)
+    maximo.append(Maxx)
 
     #Seleccionar el mínimo deseado para que se determine la J.¶
     print(f"Jota: {Jota}         Resolución Digital: {paso_hz}")
@@ -265,8 +261,8 @@ Error2 = list(map(lambda x: np.square(x), Error))
 DistHz = list(np.array(calc)-np.array(SubHarmonics)) #distancia entre J y el primer subarmónico 
 
 
-for a, b, c, d, e, f in zip(calc, Error, SubHarmonics, DistHz, S_n, Error2):
-    new_entry = new_data(a, b, c, d, e, f)
+for a, b, c, d, e, f, g in zip(calc, w, Error, SubHarmonics, DistHz, maximo, Error2):
+    new_entry = new_data(a, b, c, d, e, f, g)
     Jota_0_5Hz.append(new_entry)
 
-escritura_json()
+escritura_json("0.5a6.0")
