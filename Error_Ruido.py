@@ -2,10 +2,11 @@ import numpy as np
 from nmrsim import Multiplet
 from nmrsim.plt import mplplot
 import pandas as pd
-import matplotlib.pyplot as plt
 from scipy.signal import argrelextrema
 import json 
 from statistics import mean
+
+ww = 2.8
 
 def ReadJsonNoise (x, c):
     prueba = pd.read_json(x)
@@ -36,7 +37,7 @@ def multiplet (v, I, J, r):
     min_x = v - 20 
     max_x = v + 20
     td = Multiplet(v , I, [(J, r)]) 
-    grafica = mplplot(td.peaklist(), points=1000, w=0.5, limits=(min_x, max_x))
+    grafica = mplplot(td.peaklist(), points=1000, w=ww, limits=(min_x, max_x))
     return grafica 
 
 
@@ -138,9 +139,9 @@ def new_data (d, E, S, D, sn, E2): #Escribir los datos que quiero dentro del dic
     #J= cte. de acoplamiento que yo puse(jota), d= cte. de acoplamiento determinada(calc), E=error 
     dato_n = {}
     
-    dato_n['Jref'] = 2.0
+    dato_n['Jref'] = 1.0
     dato_n['Jdet'] = d
-    dato_n['Width'] = 0.5 
+    dato_n['Width'] = ww 
     dato_n['Error'] = E 
     dato_n['1Subharmonic'] = S
     dato_n['Distance'] = D
@@ -149,8 +150,8 @@ def new_data (d, E, S, D, sn, E2): #Escribir los datos que quiero dentro del dic
     return dato_n
 
 #crear el Json 
-def escritura_json ():
-    nombre = f"J2HzW0_5HzVariandoRuido.json"
+def escritura_json (x):
+    nombre = f"{x}.json"
     with open(nombre, 'w') as archivo: 
         json.dump(Jota_0_5Hz, archivo)
         #print("Archivo exportado con éxito")
@@ -187,8 +188,8 @@ def Armonics (x, integ):
         return 0
 
 #jotas = np.linspace(0.5, 12.0, 201)#el intervalo de trabajo de las J´s en las que quiero trabajar
-jotas = [2.0 for _ in range(201)]
-division = np.linspace(5, 300, 201)
+jotas = [1.0 for _ in range(148)]
+division = np.arange(5, 301, 2) #len: 148
 calc = [] #lista para guardar la J que determina JDoubling
 Jota_0_5Hz = [] #lista donde guardar los datos para el json
 SubHarmonics = [] #lista que guarda el primer valor del subarmónico
@@ -196,7 +197,7 @@ S_n = []
 
 for i in range (len(division)):
     #Para simular 
-    J = 2.0
+    J = 1.0
     D = division[i]
     ruido = ReadJsonNoise("RandomNoise.json", D) 
     multiplete = multiplet(1200.0, 1, J, 1) 
@@ -269,4 +270,4 @@ for a, b, c, d, e, f in zip(calc, Error, SubHarmonics, DistHz, S_n, Error2):
     new_entry = new_data(a, b, c, d, e, f)
     Jota_0_5Hz.append(new_entry)
 
-escritura_json()
+escritura_json("J1yW2_8ruido")
