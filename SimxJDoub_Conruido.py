@@ -30,12 +30,12 @@ def Noise (a, b):
     return mse, rmse, s_n
 
 
-def multiplet (v, I, J, r):
+def multiplet (v, I, J, r, ww):
     #La simulacion tan famosa que ya conoces
     min_x = v - 20 
     max_x = v + 20
     td = Multiplet(v , I, [(J, r)]) 
-    grafica = mplplot(td.peaklist(), points=1000, w=0.5, limits=(min_x, max_x))
+    grafica = mplplot(td.peaklist(), points=1000, w=ww, limits=(min_x, max_x))
     return grafica 
 
 
@@ -137,25 +137,25 @@ def trasladar(ys, n):
 def Armonics (x, integ):
     armonic1 = x
     if armonic1 in integ: 
-        print("armonico coincide perfectamente")
+        print(f"armonico coincide perfectamente: {armonic1}")
         return armonic1 
     
     elif armonic1 + 1 in integ:
-        print("armonico coincide +1") 
+        print(f"armonico coincide +1: {armonic1 + 1}") 
         
         return armonic1 + 1
 
     elif armonic1 + 2 in integ: 
-        print("armonico coincide +2")
+        print(f"armonico coincide +2: {armonic1 + 2}")
         
         return armonic1 + 2
     
     elif armonic1 - 1 in integ: 
-        print("armonico coincide -1")
+        print(f"armonico coincide -1: {armonic1 - 1}")
         return armonic1 - 1
     
     elif armonic1 - 2 in integ:
-        print("armonico coincide -1") 
+        print(f"armonico coincide -2: {armonic1 -2}") 
         return armonic1 - 2
     
     else:
@@ -164,19 +164,23 @@ def Armonics (x, integ):
     
 
 #Para simular 
-J = 0.5
-ruido = ReadJsonNoise("RandomNoise.json", 7) 
-multiplete = multiplet(1200.0, 1, J, 1) 
+J = 7.7
+ww = 11.3
+dividir = 81
+print(f"J referencia: {J}")
+print(f"W ancho de señal: {ww}")
+ruido = ReadJsonNoise("RandomNoise.json", dividir) 
+multiplete = multiplet(1200.0, 1, J, 1, ww) 
 intensidades = multiplete[1] 
 desplazamiento = multiplete[0] 
 señalCruido = ruido + intensidades 
 mse, rmse, s_n = Noise(intensidades, ruido) 
-#Grafica 
+"""#Grafica 
 plt.plot(desplazamiento, señalCruido)
 plt.title(f"Relación Señal/Ruido: {s_n}")
 plt.xlabel("Desplazamiento (Hz)")
 plt.ylabel("Intensidades")
-plt.show()
+plt.show()"""
 
 
 archiv_txt(desplazamiento, señalCruido)
@@ -201,9 +205,9 @@ intervalo = int((J / paso_hz) * 1.3)
 m = 164
 integrs = integrar(yy, intervalo, m)
 
-plt.figure(figsize=(20,10))
+"""plt.figure(figsize=(20,10))
 plt.plot(integrs, marker = 'o')
-plt.show()
+plt.show()"""
 
 busqueda = int(intervalo/7)
 minimosR = argrelextrema(integrs, np.less, order=busqueda, mode= 'wrap')[0]#busca el minimo mas minimo
@@ -218,6 +222,13 @@ subarmos= Armonics(armonic1, minimos)
 
 Jota = minimosR[-1] * paso_hz
 
+distance = Jota - (subarmos * paso_hz)
+Er = J - Jota
+er2 = pow(Er, 2)
+
 #Seleccionar el mínimo deseado para que se determine la J.¶
-print(f"Jota: {Jota}         Resolución Digital: {paso_hz}")
+print(f"Jota Determinada: {Jota}         Resolución Digital: {paso_hz}")
+print(f"la distancia es: {distance} Hz")
+print(f"Error: {Er}         Error al cuadrado: {er2}")
+
 
