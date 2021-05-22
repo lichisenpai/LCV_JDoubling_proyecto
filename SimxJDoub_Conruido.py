@@ -2,7 +2,7 @@ import numpy as np
 from nmrsim import Multiplet
 from nmrsim.plt import mplplot
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from scipy.signal import argrelextrema
 from statistics import mean
 
@@ -164,9 +164,9 @@ def Armonics (x, integ):
     
 
 #Para simular 
-J = 7.7
-ww = 11.3
-dividir = 81
+J = 7.9
+ww = 9.2
+dividir = 215
 print(f"J referencia: {J}")
 print(f"W ancho de señal: {ww}")
 ruido = ReadJsonNoise("RandomNoise.json", dividir) 
