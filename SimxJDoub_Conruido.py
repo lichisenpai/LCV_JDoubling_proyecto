@@ -2,7 +2,7 @@ import numpy as np
 from nmrsim import Multiplet
 from nmrsim.plt import mplplot
 import pandas as pd
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from scipy.signal import argrelextrema
 from statistics import mean
 
@@ -164,9 +164,9 @@ def Armonics (x, integ):
     
 
 #Para simular 
-J = 7.9
-ww = 9.2
-dividir = 215
+J = 1
+ww = 1.4
+dividir = 194
 print(f"J referencia: {J}")
 print(f"W ancho de señal: {ww}")
 ruido = ReadJsonNoise("RandomNoise.json", dividir) 
@@ -175,8 +175,8 @@ intensidades = multiplete[1]
 desplazamiento = multiplete[0] 
 señalCruido = ruido + intensidades 
 mse, rmse, s_n = Noise(intensidades, ruido) 
-"""#Grafica 
-plt.plot(desplazamiento, señalCruido)
+#Grafica 
+"""plt.plot(desplazamiento, señalCruido)
 plt.title(f"Relación Señal/Ruido: {s_n}")
 plt.xlabel("Desplazamiento (Hz)")
 plt.ylabel("Intensidades")
@@ -204,8 +204,8 @@ nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
 intervalo = int((J / paso_hz) * 1.3)
 m = 164
 integrs = integrar(yy, intervalo, m)
-
-"""plt.figure(figsize=(20,10))
+"""
+plt.figure(figsize=(20,10))
 plt.plot(integrs, marker = 'o')
 plt.show()"""
 
