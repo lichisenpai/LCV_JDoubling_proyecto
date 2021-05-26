@@ -6,7 +6,7 @@ from scipy.signal import argrelextrema
 import json 
 from statistics import mean
 
-ww = 3.0
+ww = 12.0
 
 def ReadJsonNoise (x, c):
     prueba = pd.read_json(x)
@@ -197,7 +197,7 @@ S_n = []
 
 for i in range (len(division)):
     #Para simular 
-    J = 1.0
+    J = 1.8
     D = division[i]
     ruido = ReadJsonNoise("RandomNoise.json", D) 
     multiplete = multiplet(1200.0, 1, J, 1) 
@@ -270,4 +270,4 @@ for a, b, c, d, e, f in zip(calc, Error, SubHarmonics, DistHz, S_n, Error2):
     new_entry = new_data(a, b, c, d, e, f)
     Jota_0_5Hz.append(new_entry)
 
-escritura_json("J1yW3_0ruido")
+escritura_json("J1yW12_0uido")
