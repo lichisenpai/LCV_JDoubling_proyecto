@@ -6,7 +6,7 @@ from scipy.signal import argrelextrema
 import json 
 from statistics import mean
 
-ww = 12.0
+ww = 2.0
 
 def ReadJsonNoise (x, c):
     prueba = pd.read_json(x)
@@ -139,7 +139,7 @@ def new_data (d, E, S, D, sn, E2): #Escribir los datos que quiero dentro del dic
     #J= cte. de acoplamiento que yo puse(jota), d= cte. de acoplamiento determinada(calc), E=error 
     dato_n = {}
     
-    dato_n['Jref'] = 1.0
+    dato_n['Jref'] = 1.8
     dato_n['Jdet'] = d
     dato_n['Width'] = ww 
     dato_n['Error'] = E 
@@ -188,7 +188,7 @@ def Armonics (x, integ):
         return 0
 
 #jotas = np.linspace(0.5, 12.0, 201)#el intervalo de trabajo de las J´s en las que quiero trabajar
-jotas = [1.0 for _ in range(148)]
+jotas = [1.8 for _ in range(148)]
 division = np.arange(5, 301, 2) #len: 148
 calc = [] #lista para guardar la J que determina JDoubling
 Jota_0_5Hz = [] #lista donde guardar los datos para el json
@@ -270,4 +270,4 @@ for a, b, c, d, e, f in zip(calc, Error, SubHarmonics, DistHz, S_n, Error2):
     new_entry = new_data(a, b, c, d, e, f)
     Jota_0_5Hz.append(new_entry)
 
-escritura_json("J1yW12_0uido")
+escritura_json("J1_8yW2_0ruido")
