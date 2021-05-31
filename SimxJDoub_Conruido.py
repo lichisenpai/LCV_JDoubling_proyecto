@@ -164,9 +164,9 @@ def Armonics (x, integ):
     
 
 #Para simular 
-J = 1
-ww = 1.4
-dividir = 194
+J = 1.0
+ww = 0.5
+dividir = 5
 print(f"J referencia: {J}")
 print(f"W ancho de señal: {ww}")
 ruido = ReadJsonNoise("RandomNoise.json", dividir) 
@@ -176,11 +176,11 @@ desplazamiento = multiplete[0]
 señalCruido = ruido + intensidades 
 mse, rmse, s_n = Noise(intensidades, ruido) 
 #Grafica 
-"""plt.plot(desplazamiento, señalCruido)
-plt.title(f"Relación Señal/Ruido: {s_n}")
+plt.plot(desplazamiento, señalCruido)
+#plt.title(f"Relación Señal/Ruido: {s_n}")
 plt.xlabel("Desplazamiento (Hz)")
 plt.ylabel("Intensidades")
-plt.show()"""
+plt.show()
 
 
 archiv_txt(desplazamiento, señalCruido)
@@ -204,10 +204,11 @@ nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
 intervalo = int((J / paso_hz) * 1.3)
 m = 164
 integrs = integrar(yy, intervalo, m)
-"""
+
 plt.figure(figsize=(20,10))
 plt.plot(integrs, marker = 'o')
-plt.show()"""
+plt.xlabel("no. de punto * resolución digital (Hz)")
+plt.show()
 
 busqueda = int(intervalo/7)
 minimosR = argrelextrema(integrs, np.less, order=busqueda, mode= 'wrap')[0]#busca el minimo mas minimo
