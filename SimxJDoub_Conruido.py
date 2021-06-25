@@ -165,8 +165,8 @@ def Armonics (x, integ):
 
 #Para simular 
 J = 1.0
-ww = 0.5
-dividir = 5
+ww = 5.5
+dividir = 130
 print(f"J referencia: {J}")
 print(f"W ancho de señal: {ww}")
 ruido = ReadJsonNoise("RandomNoise.json", dividir) 
