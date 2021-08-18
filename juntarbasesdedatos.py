@@ -1,23 +1,23 @@
 import pandas as pd 
 import json
 
-a = pd.read_json('J1yW5_6ruido.json')
-b = pd.read_json('J1yW5_7ruido.json')
-c = pd.read_json('J1yW5_8ruido.json')
-d = pd.read_json('J1yW5_9ruido.json')
-e = pd.read_json('J1yW6_0ruido.json')
-f = pd.read_json('J1yW6_1ruido.json')
-f = pd.read_json('J1yW6_2ruido.json')
-g = pd.read_json('J1yW6_3ruido.json')
-g = pd.read_json('J1yW6_4ruido.json')
-g = pd.read_json('J1yW6_5ruido.json')
-g = pd.read_json('J1yW6_6ruido.json')
-f = pd.read_json('J1yW6_7ruido.json')
-h = pd.read_json('J1yW6_8ruido.json')
-i = pd.read_json('J1yW6_9ruido.json')
-j = pd.read_json('J1yW7_0ruido.json')
-f = pd.read_json('J1yW7_1ruido.json')
-k = pd.read_json('J1yW7_2ruido.json')
+a = pd.read_json('J10_6yW11_0ruido.json')
+b = pd.read_json('J10_6yW11_2ruido.json')
+c = pd.read_json('J10_6yW11_4ruido.json')
+d = pd.read_json('J10_6yW11_6ruido.json')
+e = pd.read_json('J10_6yW11_8ruido.json')
+f = pd.read_json('J10_6yW12_0ruido.json')
+g = pd.read_json('J10_8yW10_3ruido.json')
+h = pd.read_json('J10_8yW10_5ruido.json')
+i = pd.read_json('J10_8yW10_7ruido.json')
+j = pd.read_json('J10_8yW10_9ruido.json')
+k = pd.read_json('J10_8yW11_0ruido.json')
+l = pd.read_json('J10_8yW11_2ruido.json')
+m = pd.read_json('J10_8yW11_4ruido.json')
+n = pd.read_json('J10_8yW11_8ruido.json')
+o = pd.read_json('J10_8yW11_6ruido.json')
+p = pd.read_json('J10_8yW12_0ruido.json')
+"""k = pd.read_json('J1yW7_2ruido.json')
 l = pd.read_json('J1yW7_3ruido.json')
 m = pd.read_json('J1yW7_4ruido.json')
 n = pd.read_json('J1yW7_5ruido.json')
@@ -69,7 +69,8 @@ fff = pd.read_json('J1yW11_9ruido.json')
 ggg = pd.read_json('J1yW12_0ruido.json')
 
 dataset = pd.concat([a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y ,z, aa, bb, cc, dd, ee, ff, gg, hh, ii, jj, kk, ll, mm, nn, oo, pp, qq, rr, ss, tt, uu, vv, ww, xx, yy, zz, aaa, bbb, ccc, ddd, eee, fff, ggg], axis=0)
-
+"""
+dataset = pd.concat([a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p], axis=0)
 #crear el Json 
 def escritura_json (x):
     nombre = f"{x}.json"
@@ -80,5 +81,5 @@ def escritura_json (x):
 
 result = dataset.to_json(orient="records")
 parsed = json.loads(result)
-escritura_json("J1HzW5_6a12_0Hz")
+escritura_json("J10_8y10_6HzW10_3a12_0Hz")
 
