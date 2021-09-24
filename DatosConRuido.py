@@ -16,8 +16,10 @@ def ReadJsonNoise (x, c):
 #Aqui genero los "estadisticos" para medir el ruido 
 def Noise (a, b):
     original = a
-    noise = b 
-    mse = (np.square(original - noise)).mean() #aqui nos dice cuanto "ruido" hay en promedio al cuadrado
+    noise = b
+    prom = sum(noise)/len(noise)
+    msex = list(map(lambda x: np.square(x - prom), noise))
+    mse = sum(msex)/len(noise)
     rmse = pow(mse, 0.5) #la raiz cuadrada del anterior
     maxim = max(original)# nos da el maximo de la simulacion original
     s_n = maxim / rmse #relacion señal ruido
@@ -27,11 +29,10 @@ def Noise (a, b):
     print("La relación señal ruido es: ", s_n)
     return mse, rmse, s_n
 
-
-def multiplet (v, I, J, r):
+def multiplet (v, I, J, r, W):
     #La simulacion tan famosa que ya conoces
     td = Multiplet(v , I, [(J, r)]) 
-    grafica = mplplot(td.peaklist(), points=1000, w=0.5, limits=[])
+    grafica = mplplot(td.peaklist(), points=1000, w=W , limits=[])
     return grafica 
 
 
@@ -66,7 +67,7 @@ def archiv_txt (X, Y):
 
 
 ruido = ReadJsonNoise("RandomNoise.json", 50) #lee el Json y el segundo argumento es para dividir el ruido y se haga menos notorio en grafica
-multiplete = multiplet(1200.0, 1, 1.0, 1) #aqui me genera el grafico de la señal SIN el ruido
+multiplete = multiplet(1200.0, 1, 1.0, 1, 12.0) #aqui me genera el grafico de la señal SIN el ruido
 
 intensidades = multiplete[1] #los valores en Y de la señal SIN el ruido
 desplazamiento = multiplete[0] #los valores en x (Hz) de la señal SIN el ruido

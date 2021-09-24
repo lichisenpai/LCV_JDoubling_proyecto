@@ -183,7 +183,7 @@ def Armonics (x, integ):
 #señal = multiplet(1200, 1, 3.0, 1)
 #archiv_txt(señal[0], señal[1])
 
-yy, a, b = leer_archivo('ha_06.slc')
+yy, a, b = leer_archivo('Prueba.slc')
 
 iz = 0
 de = len(yy) - 1

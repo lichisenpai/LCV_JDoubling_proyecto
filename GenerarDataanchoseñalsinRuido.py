@@ -15,7 +15,7 @@ def ReadJsonNoise (x, c):
     return Norm
 
 
-def Noise (a, b):
+"""def Noise (a, b):
     original = a
     noise = b
     prom = sum(noise)/len(noise)
@@ -28,7 +28,7 @@ def Noise (a, b):
     print("El rmse es: ", rmse)
     print("El maximo es: ", maxim)
     print("La relación señal ruido es: ", s_n)
-    return mse, rmse, s_n
+    return mse, rmse, s_n"""
 
 
 def multiplet (v, I, J, r, W):
@@ -138,7 +138,7 @@ def new_data (d, WW, E, S, D, M, E2): #Escribir los datos que quiero dentro del 
     #J= cte. de acoplamiento que yo puse(jota), d= cte. de acoplamiento determinada(calc), E=error 
     dato_n = {}
     
-    dato_n['Jref'] = 2.0
+    dato_n['Jref'] = 1.3
     dato_n['Jdet'] = d
     dato_n['Width'] = WW 
     dato_n['Error'] = E 
@@ -187,16 +187,16 @@ def Armonics (x, integ):
         return 0
 
 #jotas = np.linspace(0.5, 182.0, 201)#el intervalo de trabajo de las J´s en las que quiero trabajar
-jotas = [2.0 for _ in range(201)]
+jotas = [1.3 for _ in range(201)]
 calc = [] #lista para guardar la J que determina JDoubling
 Jota_0_5Hz = [] #lista donde guardar los datos para el json
 SubHarmonics = [] #lista que guarda el primer valor del subarmónico
 maximo = []
-w= np.linspace(0.5, 6, 201)
+w= np.linspace(0.5, 12.0, 201)
 
 for i in range (len(w)):
     #Para simular 
-    J = 2.0
+    J = 1.3
     ww = w[i]
     #ruido = ReadJsonNoise("RandomNoise.json", 300) 
     multiplete = multiplet(1200.0, 1, J, 1, ww) 
@@ -265,4 +265,4 @@ for a, b, c, d, e, f, g in zip(calc, w, Error, SubHarmonics, DistHz, maximo, Err
     new_entry = new_data(a, b, c, d, e, f, g)
     Jota_0_5Hz.append(new_entry)
 
-escritura_json("0.5a6.0")
+escritura_json("J1_3yW0_5a12_0")

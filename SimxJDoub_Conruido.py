@@ -19,7 +19,7 @@ def Noise (a, b):
     noise = b
     prom = sum(noise)/len(noise)
     msex = list(map(lambda x: np.square(x - prom), noise))
-    mse = mean(msex)
+    mse = sum(msex)/len(noise)
     rmse = pow(mse, 0.5) #la raiz cuadrada del anterior
     maxim = max(original)# nos da el maximo de la simulacion original
     s_n = maxim / rmse #relacion señal ruido
@@ -32,8 +32,8 @@ def Noise (a, b):
 
 def multiplet (v, I, J, r, ww):
     #La simulacion tan famosa que ya conoces
-    min_x = v - 20 
-    max_x = v + 20
+    min_x = v - 10 
+    max_x = v + 10
     td = Multiplet(v , I, [(J, r)]) 
     grafica = mplplot(td.peaklist(), points=1000, w=ww, limits=(min_x, max_x))
     return grafica 
@@ -164,8 +164,8 @@ def Armonics (x, integ):
     
 
 #Para simular 
-J = 1.0
-ww = 5.5
+J = 1.5
+ww = 12.0
 dividir = 130
 print(f"J referencia: {J}")
 print(f"W ancho de señal: {ww}")
