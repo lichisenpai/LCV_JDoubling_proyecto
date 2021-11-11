@@ -88,8 +88,10 @@ def exp_noise (xx, yy, r1, r2):
 
     aa = np.array(yy)
     ss = np.array(xx) #shape: (1000,)
-    subsetter = np.where((ss <= int(r2 + 2)) & (ss >= int(r1 - 2)))
+    subsetter = np.where((ss <= int(r2 + 5)) & (ss >= int(r1 - 5)))
     only_noise = np.delete(aa, subsetter)
+    print("el ruido: ",only_noise)
+    #plt.scatter(np.linspace(0,len(only_noise),len(only_noise)),only_noise)
 
     return only_noise #return an array with only signal noise
 
@@ -98,7 +100,7 @@ def Noise (a, b):
     noise = b
     prom = sum(noise)/len(noise)
     msex = list(map(lambda x: np.square(x - prom), noise))
-    mse = mean(msex)
+    mse = sum(msex)/(len(noise) - 1)
     rmse = pow(mse, 0.5) #la raiz cuadrada del anterior
     maxim = max(original)# nos da el maximo de la simulacion original
     s_n = maxim / rmse #relacion señal ruido
@@ -107,6 +109,7 @@ def Noise (a, b):
     print("El maximo es: ", maxim)
     print("La relación señal ruido es: ", s_n)
     return mse, rmse, s_n
+
 
 def aplicar(x, y, m):
     # El tama;o de x tiene que ser del tama;o de y mas m
@@ -183,7 +186,7 @@ def Armonics (x, integ):
 #señal = multiplet(1200, 1, 3.0, 1)
 #archiv_txt(señal[0], señal[1])
 
-yy, a, b = leer_archivo('Prueba.slc')
+yy, a, b = leer_archivo('ha_06.slc')
 
 iz = 0
 de = len(yy) - 1

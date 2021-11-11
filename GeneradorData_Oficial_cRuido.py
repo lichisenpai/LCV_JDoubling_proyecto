@@ -21,7 +21,7 @@ def Noise (a, b):
     noise = b
     prom = sum(noise)/len(noise)
     msex = list(map(lambda x: np.square(x - prom), noise))
-    mse = mean(msex)
+    mse = sum(msex)/(len(noise) - 1)
     rmse = pow(mse, 0.5) #la raiz cuadrada del anterior
     maxim = max(original)# nos da el maximo de la simulacion original
     s_n = maxim / rmse #relacion señal ruido

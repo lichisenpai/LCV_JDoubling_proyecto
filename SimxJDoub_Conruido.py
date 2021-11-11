@@ -19,7 +19,7 @@ def Noise (a, b):
     noise = b
     prom = sum(noise)/len(noise)
     msex = list(map(lambda x: np.square(x - prom), noise))
-    mse = sum(msex)/len(noise)
+    mse = sum(msex)/(len(noise) - 1 )
     rmse = pow(mse, 0.5) #la raiz cuadrada del anterior
     maxim = max(original)# nos da el maximo de la simulacion original
     s_n = maxim / rmse #relacion señal ruido
@@ -164,8 +164,8 @@ def Armonics (x, integ):
     
 
 #Para simular 
-J = 1.5
-ww = 12.0
+J = 1.0
+ww = 0.5
 dividir = 130
 print(f"J referencia: {J}")
 print(f"W ancho de señal: {ww}")
@@ -231,5 +231,3 @@ er2 = pow(Er, 2)
 print(f"Jota Determinada: {Jota}         Resolución Digital: {paso_hz}")
 print(f"la distancia es: {distance} Hz")
 print(f"Error: {Er}         Error al cuadrado: {er2}")
-
-
