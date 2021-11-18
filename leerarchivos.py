@@ -77,10 +77,10 @@ def det_width (xx, yy):
     pl.axvspan(r1, r2, facecolor='g', alpha=0.5)
     pl.show()
 
-    print(r1, r2)
+    print(f"Ancho de señal a media altura:\n valor minimo: {r1} Hz, valor maximo: {r2} Hz")
     
     w = r2-r1
-    print(w)
+    print(f"Ancho total: {w} Hz")
 
     return w, r1, r2
 
@@ -90,9 +90,6 @@ def exp_noise (xx, yy, r1, r2):
     ss = np.array(xx) #shape: (1000,)
     subsetter = np.where((ss <= int(r2 + 5)) & (ss >= int(r1 - 5)))
     only_noise = np.delete(aa, subsetter)
-    print("el ruido: ",only_noise)
-    #plt.scatter(np.linspace(0,len(only_noise),len(only_noise)),only_noise)
-
     return only_noise #return an array with only signal noise
 
 def Noise (a, b):
@@ -129,9 +126,8 @@ def convolucion(yy, n = 40, m = 128): #que n va de 1 hasta 64
     return ceros
 
 #Input: yy
-def integrar(yy, intervalo = 60, m = 8):
+def integrar(yy, intervalo=60, m=8):
     #intervalo es el maximo valor de las n
-    
     integrs = np.zeros(intervalo)
     
     for i in range(1, intervalo):
@@ -186,6 +182,7 @@ def Armonics (x, integ):
 #señal = multiplet(1200, 1, 3.0, 1)
 #archiv_txt(señal[0], señal[1])
 
+"""
 yy, a, b = leer_archivo('ha_06.slc')
 
 iz = 0
@@ -235,3 +232,4 @@ distance = Jota - (subarmos * paso_hz)
 print(f"Jota Determinada: {Jota}         Resolución Digital: {paso_hz}")
 print(f"la distancia es: {distance} Hz")
 
+"""

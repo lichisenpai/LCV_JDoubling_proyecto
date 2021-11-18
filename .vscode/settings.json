@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "c:\\0001licha\\trabajo de investigacion-RMN\\mis programas\\LCV_JDoubling_proyecto\\programs\\Scripts\\python.exe"
+    "python.pythonPath": "c:\\0001licha\\trabajo de investigacion-RMN\\mis programas\\LCV_JDoubling_proyecto\\programs\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.defaultInterpreterPath": "${workspaceFolder}/env/bin/python3.8"
 }
