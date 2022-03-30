@@ -9,7 +9,7 @@ from statistics import mean
 def ReadJsonNoise (x, c):
     prueba = pd.read_json(x)
     Y = prueba['Random']#para tenerlo como array
-    Rvalue = np.random.choice(Y, 1000)#wlige 1000 puntos al azar, y 1000 por que es el valor de puntos que yo meti por default a mi simulacion
+    Rvalue = np.random.choice(Y, 500)#wlige 1000 puntos al azar, y 1000 por que es el valor de puntos que yo meti por default a mi simulacion
     Norm = list(map(lambda w: w / c, Rvalue))#El c es el valor que divide los valores random de ruido, entre mayor el no. se ve menis el ruido
     return Norm
 
@@ -35,7 +35,7 @@ def multiplet (v, I, J, r, ww):
     min_x = v - 10 
     max_x = v + 10
     td = Multiplet(v , I, [(J, r)]) 
-    grafica = mplplot(td.peaklist(), points=1000, w=ww, limits=(min_x, max_x))
+    grafica = mplplot(td.peaklist(), points=500, w=ww, limits=(min_x, max_x))
     return grafica 
 
 
@@ -164,7 +164,7 @@ def Armonics (x, integ):
     
 
 #Para simular 
-J = 1.0
+J = 4.3
 ww = 0.5
 dividir = 130
 print(f"J referencia: {J}")
@@ -201,7 +201,7 @@ xx = xx[iz:de]
 nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
 
 # La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
-intervalo = int((J / paso_hz) * 1.3)
+intervalo = int((J / paso_hz) * 1.9)
 m = 164
 integrs = integrar(yy, intervalo, m)
 

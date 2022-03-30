@@ -32,9 +32,7 @@ class Jdoubling:
     def aplicar (self, x, y, m):
         return leerarchivos.aplicar(x, y, m)
 
-    def convolution (self, yy, n = 40, m = 128):
-        return leerarchivos.convolucion(yy, n, m)
-    
+
     def integrar (self, intervalo=60, m=8):
         return leerarchivos.integrar(self.yy, intervalo, m)
     
@@ -92,6 +90,5 @@ grafica = nose.GraficaIntegral()
 J, dist, sub = nose.SerchingMinima()
 ancho = nose.ExperimentalWidth()
 mse, rmse, s_n = nose.ExperimentalNoise()
-
 
 #print(type(tupla))

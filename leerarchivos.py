@@ -88,7 +88,7 @@ def exp_noise (xx, yy, r1, r2):
 
     aa = np.array(yy)
     ss = np.array(xx) #shape: (1000,)
-    subsetter = np.where((ss <= int(r2 + 5)) & (ss >= int(r1 - 5)))
+    subsetter = np.where((ss <= int(r2 + 10)) & (ss >= int(r1 - 10)))
     only_noise = np.delete(aa, subsetter)
     return only_noise #return an array with only signal noise
 

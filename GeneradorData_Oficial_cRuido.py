@@ -4,11 +4,12 @@ from nmrsim.plt import mplplot
 import pandas as pd
 from scipy.signal import argrelextrema
 import json 
-from statistics import mean
+from statistics import median
+import matplotlib.pyplot as plt
 
-ww = 10.3
+ww = 24.0
 
-def ReadJsonNoise (x, c):
+def ReadJsonNoise (x , c):
     prueba = pd.read_json(x)
     Y = prueba['Random']#para tenerlo como array
     Rvalue = np.random.choice(Y, 1000)#wlige 1000 puntos al azar, y 1000 por que es el valor de puntos que yo meti por default a mi simulacion
@@ -139,7 +140,7 @@ def new_data (d, E, S, D, sn, E2): #Escribir los datos que quiero dentro del dic
     #J= cte. de acoplamiento que yo puse(jota), d= cte. de acoplamiento determinada(calc), E=error 
     dato_n = {}
     
-    dato_n['Jref'] = 10.8
+    dato_n['Jref'] = 3.4
     dato_n['Jdet'] = d
     dato_n['Width'] = ww 
     dato_n['Error'] = E 
@@ -188,8 +189,8 @@ def Armonics (x, integ):
         return 0
 
 #jotas = np.linspace(0.5, 12.0, 201)#el intervalo de trabajo de las J´s en las que quiero trabajar
-jotas = [10.8 for _ in range(148)]
-division = np.arange(5, 301, 2) #len: 148
+jotas = [3.4 for _ in range(37)]
+division = np.arange(5, 301, 8) #len: 60
 calc = [] #lista para guardar la J que determina JDoubling
 Jota_0_5Hz = [] #lista donde guardar los datos para el json
 SubHarmonics = [] #lista que guarda el primer valor del subarmónico
@@ -197,7 +198,7 @@ S_n = []
 
 for i in range (len(division)):
     #Para simular 
-    J = 10.8
+    J = 3.4
     D = division[i]
     ruido = ReadJsonNoise("RandomNoise.json", D) 
     multiplete = multiplet(1200.0, 1, J, 1) 
@@ -269,5 +270,4 @@ DistHz = list(np.array(calc)-np.array(SubHarmonics)) #distancia entre J y el pri
 for a, b, c, d, e, f in zip(calc, Error, SubHarmonics, DistHz, S_n, Error2):
     new_entry = new_data(a, b, c, d, e, f)
     Jota_0_5Hz.append(new_entry)
-
-escritura_json("J10_8yW10_3ruido")
+escritura_json("J3_4yW24_0ruido")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
