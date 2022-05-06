@@ -2,33 +2,23 @@ import numpy as np
 import pandas as pd 
 import seaborn as sns 
 import matplotlib.pyplot as plt
-"""nose = [1,2,3,4,5,6,7,8.2,8.4,9,8.3]
 
-vacio =[]
+dataset_clean = pd.read_json("J_Concatenadas\J12_0Hz_Concatenado.json")
 
-for i in range (len(nose)):
-    lol = nose[i]
-    if lol < 9:
-        vacio.append(lol)
-        if lol >= 8.0 and lol <= 8.9:
-            print(nose.index(lol))
+"""fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2,2)
 
-print("la lista es", vacio)"""
+ye = "Error"
 
-df = pd.read_json("J10_8yW12_0ruido.json")
+ax1.plot(dataset_clean['Width'], dataset_clean[ye], "kx")
+ax1.set_title("Ancho de Señal (HZ)")
+ax2.plot(dataset_clean['1Subharmonic'], dataset_clean[ye], "kx")
+ax2.set_title("Subarmónico (Hz)")
+ax3.plot(dataset_clean['Distance'], dataset_clean[ye], "kx")
+ax3.set_title("Distancia (Hz)")
+ax4.plot(dataset_clean['S/n'], dataset_clean[ye], "kx")
+ax4.set_title("S/n ratio")
+fig.tight_layout()
+plt.show()"""
 
-menor200 = df.loc[df.loc[:, 'S/n'] <= 200.0]
-mayor200 = df.loc[df.loc[:, 'S/n'] >= 200.0]
-#print("menor a 200", menor200.tail())
-#print("mayor a 200", mayor200.tail())
-
-
-print("menor a 200:", len(menor200))
-print("mayor a 200:", len(mayor200))
-
-"""RelacionVariables = sns.pairplot(menor200[['Jdet', 'Width', '1Subharmonic', 'Distance', 'S/n', "Error"]])
-RelacionVariables1 = sns.pairplot(mayor200[['Jdet', 'Width', '1Subharmonic', 'Distance', 'S/n', "Error"]])"""
-
-plt.scatter(menor200['Jdet'], menor200['Distance'])
+plt.plot(dataset_clean["S/n"], dataset_clean["Error"], "kx")
 plt.show()
-
