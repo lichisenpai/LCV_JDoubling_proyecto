@@ -1,3 +1,4 @@
+import tempfile
 from nmrsim import Multiplet
 from nmrsim.plt import mplplot
 import numpy as np
@@ -91,6 +92,8 @@ def exp_noise (xx, yy, r1, r2):
     aa = np.array(yy)
     ss = np.array(xx) #shape: (1000,)
     subsetter = np.where((ss <= int(r2 + 10)) & (ss >= int(r1 - 10)))
+    #subsetter = np.where((ss <= int(r2 * 1.3)) & (ss >= int(r1 * 0.3)))
+
     only_noise = np.delete(aa, subsetter)
     for i in range (len(only_noise)):
         if only_noise[i] < 0:
@@ -98,6 +101,7 @@ def exp_noise (xx, yy, r1, r2):
         
         else :
             only_noise [i]=i
+    #print('solo ruido: ',only_noise)
     return only_noise #return an array with only signal noise
 
 def Noise (a, b):
@@ -191,7 +195,7 @@ def Armonics (x, integ):
 #archiv_txt(señal[0], señal[1])
 
 
-yy, a, b = leer_archivo('SeñalesExperimentales/ha_17.slc')
+yy, a, b = leer_archivo('SeñalesExperimentales/ha_19.slc')
 
 iz = 0
 de = len(yy) - 1
@@ -205,10 +209,29 @@ w, r1, r2 = det_width(xx, yy)
 noise = exp_noise(xx, yy, r1, r2)
 mse, rmse, s_n = Noise(yy, noise)
 
+
 #Redefiniendo el arreglo en y
 yy = yy[iz:de]
 xx = xx[iz:de]
 nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
+
+
+#correcion linea base
+pendiente = (yy[0]-yy[len(yy)-1])/(de-iz)
+ordenada_o = pendiente*iz - yy[iz]
+
+y = np.zeros(de-iz-1)
+for i in range(0, de-iz-1):
+    y[i] = yy[iz+i] - (pendiente*i-ordenada_o)
+
+print("Minimo: ", min(y))
+y = y - min(y)
+plt.figure(figsize=(20,10))
+plt.plot(yy[iz:de], color = "red")
+plt.plot(yy, color = "blue")
+plt.plot(y, color = "green")
+plt.show()
+
 
 # La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
 #intervalo = int(len(yy)/4)
@@ -240,4 +263,35 @@ distance = Jota - (subarmos * paso_hz)
 #Seleccionar el mínimo deseado para que se determine la J.¶
 print(f"Jota Determinada: {Jota}         Resolución Digital: {paso_hz}")
 print(f"la distancia es: {distance} Hz")
+
+#----------------------------------------------------------------------------------------
+#Algoritmos Machine Learning 
+
+"""import tensorflow as tf 
+import pathlib
+
+tempfile = "Algoritmos_ML/saved_model.pb"
+save_dir = str(pathlib.Path("C:/licha/trabajo de investigacion-RMN/mis programas/LCV_JDoubling_proyecto/Algoritmos_ML"))
+m = tf.saved_model.load(save_dir)
+entrada = np.array([0.75, -0.34, -1.15]).reshape(-1,3)
+prediciendo = m.predict_f(entrada)
+media, varianzaa = m.predict_f(entrada) 
+
+print("Media: ",media, "; Varianza K=2 :", varianzaa)"""
+
+
+#----------------------------------------------------------------------------------------
+#SVM
+
+import joblib
+
+#Entrada= S/n y Jdet
+Entrada = np.array([s_n, Jota]).reshape(-1,2)
+Lichi_SVM = joblib.load('Algoritmos_ML/LichiSVM.pkl')
+prediccion = Lichi_SVM.predict(Entrada)
+print("Clasificacion: ", prediccion)
+
+#----------------------------------------------------------------------------------------
+#RedNeuronal
+
 

@@ -1,3 +1,4 @@
+
 from nmrsim import Multiplet
 from nmrsim.plt import mplplot
 import numpy as np
@@ -67,7 +68,7 @@ def leer_archivo(nombre):
 def det_width (xx, yy):
 
     # create a spline of the multiplet
-    spline = UnivariateSpline(xx, yy-np.max(yy)/2, s=0)
+    spline = UnivariateSpline(xx, yy-np.max(yy)/5, s=0)
     raices = spline.roots() # find the roots
 
     r1 = raices[0]
@@ -90,7 +91,10 @@ def exp_noise (xx, yy, r1, r2):
 
     aa = np.array(yy)
     ss = np.array(xx) #shape: (1000,)
-    subsetter = np.where((ss <= int(r2 + 10)) & (ss >= int(r1 - 10)))
+    subsetter = np.where((ss <= int(r2)) & (ss >= int(r1)))
+    #subsetter = np.where((ss <= int(r2 * 1.3)) & (ss >= int(r1 * 0.3)))
+    
+
     only_noise = np.delete(aa, subsetter)
     for i in range (len(only_noise)):
         if only_noise[i] < 0:
@@ -98,7 +102,30 @@ def exp_noise (xx, yy, r1, r2):
         
         else :
             only_noise [i]=i
+    #print('solo ruido: ',only_noise)
     return only_noise #return an array with only signal noise
+
+
+def central_signal (yy, xx, r2, r1):
+    aa = np.array(yy)
+    ss = np.array(xx) #shape: (1000,)
+    #subsetter = np.where((ss >= int(r1)) & (ss <= int(r2)))
+    subsetter = np.where((ss <= int(r2 +10)) & (ss >= int(r1 -10)))
+
+
+
+    only_noise = np.delete(aa, subsetter)
+    for i in range (len(only_noise)):
+        if only_noise[i] < 0:
+            only_noise[i] = 0
+        
+        else :
+            only_noise [i]=i
+    #print('solo señal: ',only_noise)
+    #plt.plot(only_noise)
+    #plt.show()
+    return only_noise #return an array with only signal noise
+
 
 def Noise (a, b):
     original = a
@@ -191,7 +218,7 @@ def Armonics (x, integ):
 #archiv_txt(señal[0], señal[1])
 
 
-yy, a, b = leer_archivo('SeñalesExperimentales/ha_17.slc')
+yy, a, b = leer_archivo('SeñalesExperimentales/ha_08.slc')
 
 iz = 0
 de = len(yy) - 1
@@ -205,16 +232,57 @@ w, r1, r2 = det_width(xx, yy)
 noise = exp_noise(xx, yy, r1, r2)
 mse, rmse, s_n = Noise(yy, noise)
 
+
 #Redefiniendo el arreglo en y
 yy = yy[iz:de]
 xx = xx[iz:de]
 nuevo_paso_hz = (xx[-1]-xx[0])/len(yy)
 
+#redefiniendo otra ves yy con solo señal central
+#y = central_signal(yy, xx, r2, r1)
+
+
+
+#CORRECION LINEA BASE
+#posiciones
+##USING BITWISE OP
+R2 = [p for p, v in enumerate(xx) if (v >= int(r2)) & (v <= int(r2+1))] 
+R1 = [p for p, v in enumerate(xx) if (v >= int(r1)) & (v <= int(r1+1))] 
+
+print(f"R2: {R2} y R1: {R1}")
+
+pendiente = ((yy[len(yy)-1])- yy[0])/(len(yy)- 0)
+ordenada_o = pendiente*xx[0] - yy[0]
+print("pendiente: ", pendiente)
+print("yy final: ", yy[len(yy)-1])
+
+
+
+y = np.zeros(R2[0]-R1[0]-1)
+for i in range(0, R2[0]-R1[0]-1):
+    y[i] = yy[R1[0]+i] - (pendiente*i)
+
+print("Minimo: ", min(y))
+y = y - min(y)
+plt.figure(figsize=(20,10))
+#plt.plot(yy[R1[0]:R2[0]], color = "red")
+#plt.plot(range(len(yy)), [pendientee(i) for i in range(len(yy))], color = "red")
+plt.plot(yy, color = "blue")
+plt.xlabel("Desplazamiento químico (Hz)")
+plt.ylabel("Intensidad relativa")
+plt.plot(y, color = "green")
+plt.show()
+
+#nueva escala
+paso_hz_ = abs(R1[0]-R2[0])/len(y)
+x = [i*paso_hz_+min([R1[0], R2[0]]) for i in range(0, len(y))]
+
+
 # La escala en X de la siguiente figura está en enteros. Utilizar paso_Hz para convertir a Hz
 #intervalo = int(len(yy)/4)
-intervalo = int(len(yy)/4)
+intervalo = int(len(y)/4)
 m = 164
-integrs = integrar(yy, intervalo, m)
+integrs = integrar(y, intervalo, m)
 
 plt.figure(figsize=(20,10))
 plt.plot(integrs, marker = 'o')
@@ -241,3 +309,32 @@ distance = Jota - (subarmos * paso_hz)
 print(f"Jota Determinada: {Jota}         Resolución Digital: {paso_hz}")
 print(f"la distancia es: {distance} Hz")
 
+#----------------------------------------------------------------------------------------
+#Algoritmos Machine Learning 
+
+"""import tensorflow as tf 
+import pathlib
+
+tempfile = "Algoritmos_ML/saved_model.pb"
+save_dir = str(pathlib.Path("C:/licha/trabajo de investigacion-RMN/mis programas/LCV_JDoubling_proyecto/Algoritmos_ML"))
+m = tf.saved_model.load(save_dir)
+entrada = np.array([0.75, -0.34, -1.15]).reshape(-1,3)
+prediciendo = m.predict_f(entrada)
+media, varianzaa = m.predict_f(entrada) 
+
+print("Media: ",media, "; Varianza K=2 :", varianzaa)"""
+
+
+#----------------------------------------------------------------------------------------
+#SVM
+
+import joblib
+
+#Entrada= S/n y Jdet
+Entrada = np.array([s_n, Jota]).reshape(-1,2)
+Lichi_SVM = joblib.load('Algoritmos_ML/LichiSVM.pkl')
+prediccion = Lichi_SVM.predict(Entrada)
+print("Clasificacion: ", prediccion)
+
+#----------------------------------------------------------------------------------------
+#RedNeuronal
